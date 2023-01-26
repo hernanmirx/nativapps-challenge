@@ -20,29 +20,32 @@ interface Mov {
 const Index = () => {
 	const [ movies, setMovies ] = useState<Array<Mov>>([]);
 	const [ compra, setCompra ] = useState(0);
-	const { cantCart,setCantCart,setOpenVista,setSelectedMovie,setMessage } = useContext(ContextStates)
+	const { cantCart,setCantCart,setOpenVista,setSelectedMovie,message,setMessage } = useContext(ContextStates)
   
 	useEffect(() =>{
 		const searchMovies=async()=>{
-			let auxMovies:any = [];
-			let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
-			for (let i = 0; i < arrayCart.length; i++) {
-				const element = arrayCart[i];
-				const url = 'https://www.omdbapi.com/?i=' + element.id + '&apikey=5eec5adc&plot=full';
-					const result:any = await axios.get(url);
-					let resultMov = {
-						Title:result.data.Title,
-						Year:result.data.Year,
-						Genre:result.data.Genre,
-						Plot:result.data.Plot,
-						Poster:result.data.Poster,
-						imdbID:result.data.imdbID,
-						Type:result.data.Type,
-						Cant:element.cant
-					}
-					auxMovies.push(resultMov)
+			let auxMovies = [];
+			if (localStorage.getItem("arrayCart")!==null)
+			{
+				let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
+				for (let i = 0; i < arrayCart.length; i++) {
+					const element = arrayCart[i];
+					const url = 'https://www.omdbapi.com/?i=' + element.id + '&apikey=5eec5adc&plot=full';
+						const result:any = await axios.get(url);
+						let resultMov = {
+							Title:result.data.Title,
+							Year:result.data.Year,
+							Genre:result.data.Genre,
+							Plot:result.data.Plot,
+							Poster:result.data.Poster,
+							imdbID:result.data.imdbID,
+							Type:result.data.Type,
+							Cant:element.cant
+						}
+						auxMovies.push(resultMov)
+				}
+				setMovies(auxMovies)
 			}
-			setMovies(auxMovies)
 		}
 		searchMovies()
 	},[compra,cantCart])
@@ -112,7 +115,10 @@ const Index = () => {
 						</div>
 						</>
 						):(
-							<p className='bg-orange-200 p-5 rounded-xl text-center text-2xl'>El carro de compras está vacío</p>
+							 message==="" && (
+								<p className='bg-orange-200 p-5 rounded-xl text-center text-2xl'>El carro de compras está vacío</p>
+
+							)
 						)}
 					</div>
 				</div>

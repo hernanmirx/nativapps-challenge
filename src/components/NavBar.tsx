@@ -14,8 +14,14 @@ export const NavBar = () => {
     const { cantCart, setCantCart } = useContext(ContextStates)
 
     useEffect(()=>{
-        let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
-        setCantCart(arrayCart.length)
+        const checkCant = () => {
+            if (localStorage.getItem("arrayCart")!==null)
+            {
+                let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
+                setCantCart(arrayCart.length)    
+            }
+        }
+        checkCant()
     },[])
   
     return (

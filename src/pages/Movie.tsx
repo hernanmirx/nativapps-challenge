@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { useParams } from 'react-router-dom'
 import ContextStates from '../context/States';
 import axios from 'axios';
+import Message from '../components/Message';
 
 interface Mov {
 	Title:string,
@@ -24,7 +25,7 @@ function Movie() {
         Type:"",
         imdbID:""
     })
-	const { cant,setCant } = useContext(ContextStates)
+	const { cantCart,setCantCart,setMessage } = useContext(ContextStates)
 
     useEffect(() => {
         const getMovie = async () => {
@@ -40,53 +41,75 @@ function Movie() {
     const handleClick = () => {
         if (localStorage.getItem("arrayCart") === null)
         {
-            let arrayCart = [m.id]
+            let arrayCart = [{id:m.id,cant:1}]
             localStorage.setItem('arrayCart',JSON.stringify(arrayCart))
+            setCantCart(1)
         }
         else
         {
             let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
-            arrayCart.push(m.id)
+            let cantAux=1;
+            for (let i = 0; i < arrayCart.length; i++) {
+                const element = arrayCart[i];
+                if (element.id===m.id)
+                {
+                    cantAux=element.cant+1;
+                    arrayCart[i]={id:element.id,cant:cantAux}
+                }
+            }
+            if (cantAux===1)
+            {
+                arrayCart.push({id:m.id,cant:cantAux})
+                let auxCantCart=cantCart+1;
+                setCantCart(auxCantCart)        
+            }
             localStorage.setItem('arrayCart',JSON.stringify(arrayCart))
         }
-        let auxCant=cant+1;
-        setCant(auxCant)
+        setMessage("Película agregada al carro de compras");
+		setTimeout(() => {
+            setMessage("");
+		}, 3000)
+
     }
 
   return (
    		<>
 			<Layout
-				page={"Index"}
+				page={"Película"}
 			/>
             <main className='w-full'>
+                <Message/>
 				<div className='w-10/12 mx-auto mt-10 pt-5'>
 					<h1 className='text-center text-3xl'></h1>
 					<div className='w-full mt-10'>
 						{ movie!==undefined &&
-							<div key={movie.imdbID} className='w-1/2 mx-auto flex mb-10 rounded-md shadow-md'>
-								<div className='w-1/2 p-3'>
-									<img className='w-full' src={movie.Poster} alt={movie.Title}/>
-								</div>
-								<div className='w-1/2 p-3'>
-									<p className='text-xl font-bold uppercase'>{movie.Title}</p>
-									<p>Año: {movie.Year}</p>
-									<p className='capitalize'>Tipo: { movie.Type==="movie" ? "Película" : movie.Type }</p>
-                                    <div className='mt-10 w-full mx-auto'>
-                                        <button
-                                            className='bg-blue-600 w-full p-3 rounded-xl text-white uppercase'
-                                            onClick={()=>handleClick()} 
-                                        >
-                                            Agregar al carro
-                                        </button>
+							<div key={movie.imdbID} className='w-1/2 mx-auto rounded-md shadow-md mb-10'>
+                                <div key={movie.imdbID} className='w-full mx-auto flex'>
+                                    <div className='w-1/2 p-3'>
+                                        <img className='w-full' src={movie.Poster} alt={movie.Title}/>
                                     </div>
-								</div>
+                                    <div className='w-1/2 p-3'>
+                                        <p className='text-xl font-bold uppercase'>{movie.Title}</p>
+                                        <p>Año: {movie.Year}</p>
+                                        <p>Género: {movie.Genre}</p>
+                                        <p className='capitalize'>Tipo: { movie.Type==="movie" ? "Película" : movie.Type }</p>
+                                        <div className='mt-10 w-full mx-auto'>
+                                            <button
+                                                className='bg-blue-600 w-full p-3 rounded-xl text-white uppercase'
+                                                onClick={()=>handleClick()} 
+                                            >
+                                                Agregar al carro
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='w-full flex-col p-3 text-justify'>
+                                    <p>Sinópsis: {movie.Plot}</p>
+                                </div>
                             </div>
-
                             }
-
 					</div>
 				</div>
-				
 			</main>
         </>
   )

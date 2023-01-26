@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Transition,Disclosure } from '@headlessui/react'
+import { useContext, useEffect } from 'react';
+import { Disclosure } from '@headlessui/react'
 import { BiMenu,BiCart } from 'react-icons/bi'
-import { AiOutlineClose } from 'react-icons/ai'
+import ContextStates from '../context/States';
 import { Link } from 'react-router-dom';
 
 
@@ -11,7 +11,12 @@ const navigation = [
 ]
 
 export const NavBar = () => {
-    const [ open, setOpen ] = useState(false)
+    const { cantCart, setCantCart } = useContext(ContextStates)
+
+    useEffect(()=>{
+        let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
+        setCantCart(arrayCart.length)
+    },[])
   
     return (
         <Disclosure as="nav" className="bg-indigo-600 text-white shadow-md">
@@ -19,14 +24,10 @@ export const NavBar = () => {
             <div className="container mx-auto px-2 sm:px-6 lg:px-8">
                 <div className="relative flex items-center justify-between h-24">
                     <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                        {/* Mobile menu button*/}
+
                         <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-100 hover:text-white hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                             <span className="sr-only">Abrir Menú</span>
-                            {open ? (
-                                <AiOutlineClose className="block h-6 w-6" aria-hidden="true" />
-                            ) : (
                                 <BiMenu className="block h-6 w-6" aria-hidden="true" />
-                            )}
                         </Disclosure.Button>
                     </div>
                     <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
@@ -66,9 +67,16 @@ export const NavBar = () => {
                             to={"/cart"}
                             
                         >
-                            <p className="text-3xl hover:bg-indigo-500 p-3 hover:rounded-full">
-                                <BiCart/>
-                            </p>
+                            <div className='flex hover:bg-indigo-500 p-3 hover:rounded-full'>
+                                <p className="text-3xl">
+                                    <BiCart/>
+                                </p>
+                                {cantCart>0 && (
+                                    <p className="ml-7 absolute bg-red-500 text-white rounded-full px-2">
+                                        {cantCart}
+                                    </p>
+                                )}
+                            </div>
                         </Link>
                     </div>
                 </div>

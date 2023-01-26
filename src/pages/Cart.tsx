@@ -3,6 +3,7 @@ import Layout from '../components/Layout'
 import ContextStates from '../context/States';
 import { FaTrash } from 'react-icons/fa'
 import axios from 'axios';
+import Message from '../components/Message';
 
 interface Mov {
 	Title:string,
@@ -11,15 +12,15 @@ interface Mov {
 	Plot:string,
 	Poster:string,
 	imdbID:string,
-	Type:string
+	Type:string,
+	Cant:number
 }
 
 
 const Index = () => {
 	const [ movies, setMovies ] = useState<Array<Mov>>([]);
-	const [ selected, setSelected ] = useState("")
 	const [ compra, setCompra ] = useState(0);
-	const { cant,setCant,setOpenVista,respModal, setRespModal } = useContext(ContextStates)
+	const { cantCart,setCantCart,setOpenVista,setSelectedMovie,setMessage } = useContext(ContextStates)
   
 	useEffect(() =>{
 		const searchMovies=async()=>{
@@ -27,57 +28,51 @@ const Index = () => {
 			let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
 			for (let i = 0; i < arrayCart.length; i++) {
 				const element = arrayCart[i];
-				const url = 'http://www.omdbapi.com/?i=' + element + '&apikey=5eec5adc&plot=full';
+				const url = 'http://www.omdbapi.com/?i=' + element.id + '&apikey=5eec5adc&plot=full';
 					const result:any = await axios.get(url);
-					auxMovies.push(result.data)     
+					let resultMov = {
+						Title:result.data.Title,
+						Year:result.data.Year,
+						Genre:result.data.Genre,
+						Plot:result.data.Plot,
+						Poster:result.data.Poster,
+						imdbID:result.data.imdbID,
+						Type:result.data.Type,
+						Cant:element.cant
+					}
+					auxMovies.push(resultMov)
 			}
 			setMovies(auxMovies)
 		}
 		searchMovies()
-	},[compra,movies])
+	},[compra,cantCart])
 
-	useEffect(() => {
-		const deleteMovies=async()=>{
-			if (respModal)
-			{
-				let auxMovies:any = [];
-				let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
-				for (let i = 0; i < arrayCart.length; i++) {
-					const element = arrayCart[i];
-					if (element!==selected)
-					{
-						auxMovies.push(element)     
-					}
-				}
-				localStorage.clear()
-				localStorage.setItem('arrayCart',JSON.stringify(auxMovies))
-				setMovies(auxMovies)
-				setRespModal(false)
-			}
-		}
-		deleteMovies()
-	},[])
 
 	const handleClick = () => {
 		localStorage.clear()
 		setCompra(1)
-		setCant(0)
+		setCantCart(0)
+		setMessage("Compra realizada con éxito");
+		setTimeout(() => { 
+			setMessage("");
+		}, 3000)
 	}
 	const handleDelete = (id:any) => {
-		setSelected(id)
+		setSelectedMovie(id)
 		setOpenVista(true)
 	}
 
 	return (
 		<>
 			<Layout
-				page={"Index"}
+				page={"Carro de Compras"}
 			/>
 			<main className='w-full'>
+				<Message/>
 				<div className='w-10/12 mx-auto mt-10 pt-5'>
 					<h1 className='text-center text-3xl'>Carro de Compras</h1>
 					<div className='w-full mt-10 flex justify-center'>
-						{ cant>0 ? (
+						{ cantCart>0 ? (
 						<>
 						<div className='w-1/2'>
 						{ movies!==undefined && movies.map(movie=> (
@@ -91,6 +86,8 @@ const Index = () => {
 									<p className='text-xl font-bold uppercase'>{movie.Title}</p>
 									<p>Año: {movie.Year}</p>
 									<p className='capitalize'>Tipo: { movie.Type==="movie" ? "Película" : movie.Type }</p>
+									<p>Cantidad: {movie.Cant}</p>
+
 									<button 
 										type="button" 
 										className='flex mt-10'

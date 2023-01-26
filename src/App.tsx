@@ -7,12 +7,14 @@ import Movie from './pages/Movie';
 import ModalVista from './components/Modal';
 
 function App() {
-	const [ cant, setCant ] = useState(0)
+	const [ cantCart, setCantCart ] = useState(0)
 	const [ openVista, setOpenVista ] = useState(false)
 	const [ respModal, setRespModal ] = useState(false)
+	const [ message, setMessage ] = useState("")
+	const [ selectedMovie, setSelectedMovie ] = useState("")
 	return (
 		<ContextStates.Provider
-			value={{cant, setCant,openVista, setOpenVista,respModal, setRespModal}}
+			value={{cantCart, setCantCart,openVista, setOpenVista,respModal, setRespModal,selectedMovie, setSelectedMovie,message, setMessage}}
 		>
 			<BrowserRouter>
 			<Routes>

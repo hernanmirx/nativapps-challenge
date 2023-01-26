@@ -5,7 +5,29 @@ import { Dialog, Transition } from '@headlessui/react'
 import ContextStates from '../context/States';
 
 const ModalVista = () => {
-  const { openVista, setOpenVista,respModal, setRespModal } = useContext(ContextStates);
+  const { openVista, setOpenVista, setRespModal,selectedMovie,cantCart,setCantCart,setMessage } = useContext(ContextStates);
+
+		const deleteMovies=async()=>{
+			let auxMovies:any = [];
+			let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
+			for (let i = 0; i < arrayCart.length; i++) {
+				const element = arrayCart[i];
+				if (element.id!==selectedMovie)
+				{
+					auxMovies.push(element)     
+				}
+			}
+			localStorage.clear()
+			localStorage.setItem('arrayCart',JSON.stringify(auxMovies))
+			setCantCart(cantCart-1)
+			setRespModal(false)
+			setMessage("Película eliminada");
+			setTimeout(() => { 
+				setMessage("");
+			}, 3000)
+	
+		}
+		
 
 
   const cancelButtonRef = useRef(null)
@@ -44,7 +66,7 @@ const ModalVista = () => {
                         <button 
                             type='button' 
                             className='bg-red-500 p-3 rounded-xl text-white'
-                            onClick={()=>(setRespModal(true), setOpenVista(false))}
+                            onClick={()=>(deleteMovies(), setOpenVista(false))}
                         >Quitar</button>
                         <button 
                             type='button' 

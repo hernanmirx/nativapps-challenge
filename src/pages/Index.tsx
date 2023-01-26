@@ -31,7 +31,7 @@ const Index = () => {
 
 	useEffect(() =>{
 		const searchMovies=async()=>{
-			const url = 'https://www.omdbapi.com/?s=' + titleSearch + '&apikey=5eec5adc&plot=full';
+			const url = 'http://www.omdbapi.com/?s=' + titleSearch + '&apikey=5eec5adc';
 			const result = await axios.get(url);
 			if (result.data.Error===undefined)
 			{

@@ -31,12 +31,11 @@ const Index = () => {
 
 	useEffect(() =>{
 		const searchMovies=async()=>{
-			const url = 'http://www.omdbapi.com/?s=' + titleSearch + '&apikey=5eec5adc';
+			const url = 'https://www.omdbapi.com/?s=' + titleSearch + '&apikey=5eec5adc';
 			const result = await axios.get(url);
 			if (result.data.Error===undefined)
 			{
 				setMovies(result.data.Search)
-				console.log(movies[0])
 			}
 			else{
 				setMovies(INITIAL_STATE)
@@ -68,9 +67,10 @@ const Index = () => {
 						{ movies!==undefined && movies.map(movie=> (
 							movie.Title!=="" &&
 							<Link
+								key={movie.imdbID}
 								to={`/movie/${movie.imdbID}`}
 							>
-							<div key={movie.imdbID} className='w-1/2 mx-auto flex mb-10 rounded-md shadow-md hover:shadow-lg'>
+							<div className='w-1/2 mx-auto flex mb-10 rounded-md shadow-md hover:shadow-lg'>
 								<div className='w-1/4 p-3'>
 									<img className='w-full' src={movie.Poster} alt={movie.Title}/>
 								</div>

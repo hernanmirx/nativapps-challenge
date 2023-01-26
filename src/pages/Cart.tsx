@@ -28,7 +28,7 @@ const Index = () => {
 			let arrayCart = JSON.parse(localStorage.getItem("arrayCart")!)
 			for (let i = 0; i < arrayCart.length; i++) {
 				const element = arrayCart[i];
-				const url = 'http://www.omdbapi.com/?i=' + element.id + '&apikey=5eec5adc&plot=full';
+				const url = 'https://www.omdbapi.com/?i=' + element.id + '&apikey=5eec5adc&plot=full';
 					const result:any = await axios.get(url);
 					let resultMov = {
 						Title:result.data.Title,

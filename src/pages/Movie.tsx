@@ -29,7 +29,7 @@ function Movie() {
 
     useEffect(() => {
         const getMovie = async () => {
-            const url = 'http://www.omdbapi.com/?i=' + m.id + '&apikey=5eec5adc&plot=full';
+            const url = 'https://www.omdbapi.com/?i=' + m.id + '&apikey=5eec5adc&plot=full';
             const result = await axios.get(url);
             setMovie(result.data);
         }
